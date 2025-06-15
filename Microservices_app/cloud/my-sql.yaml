@@ -1,0 +1,52 @@
+# mysql-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql-service
+spec:
+  selector:
+    matchLabels:
+      app: mysql-service
+  template:
+    metadata:
+      labels:
+        app: mysql-service
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0 
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: admin
+        volumeMounts: 
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d 
+      volumes: 
+      - name: mysql-initdb 
+        configMap:
+          name: mysql-init-script
+          items:
+          - key: init-db.sql 
+            path: init-db.sql       
+      imagePullSecrets: 
+      - name: ocirsecret 
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql-service
+spec:
+  selector:
+    app: mysql-service
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP

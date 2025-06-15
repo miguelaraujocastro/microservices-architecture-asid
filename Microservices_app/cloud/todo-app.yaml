@@ -1,0 +1,42 @@
+# Use 'vi todo-app.yaml' para criar/editar este ficheiro na Cloud Shell
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todoapp
+spec:
+  selector:
+    matchLabels:
+      app: todoapp
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      containers:
+      - name: todoapp
+        image: MAD.ocir.io/ax6nf8o6d4jv/gateway-service:latest 
+        imagePullPolicy: Always
+        ports:
+        - name: todoapp
+          containerPort: 8080
+          protocol: TCP
+      imagePullSecrets:
+      - name: ocirsecret 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-lb
+  labels:
+    app: todoapp
+  annotations:
+    service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+  selector:
+    app: todoapp
