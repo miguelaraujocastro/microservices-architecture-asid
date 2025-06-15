@@ -1,4 +1,4 @@
-## 📚 Migration from Monolith to Microservices – Online Bookstore
+## 📚 Migration from Monolithic to Microservices – Online Bookstore
 
 This project consists of migrating a monolithic Java Spring Boot application of an online bookstore to a microservices-based architecture. The system was segmented following the principles of Domain-Driven Design (DDD), with each microservice having its own database. 
 
